@@ -1675,5 +1675,40 @@ body:not(.vh-ready) #vh-backup-tools{display:none!important}
  update();
 })();
 </script>
+<style id="vh-desktop-account-compact-css">
+/* En escritorio, la cuenta se abre solo cuando se solicita. En móvil se deja intacta. */
+@media(min-width:761px){
+ #vh-desktop-account{position:relative;align-self:center;z-index:1010}
+ #vh-desktop-account > summary{list-style:none;cursor:pointer;padding:10px 13px;background:#4d5056;color:#fff;border-radius:8px;font:700 12px Arial,sans-serif;white-space:nowrap}
+ #vh-desktop-account > summary::-webkit-details-marker{display:none}
+ #vh-desktop-account > summary:after{content:' ▾';color:#ffb778}
+ #vh-desktop-account[open] > summary{background:#e87512}
+ #vh-desktop-account-panel{position:absolute;right:0;top:calc(100% + 8px);width:min(360px,calc(100vw - 40px));padding:12px;background:#fff;border:1px solid #dfe4e8;border-radius:10px;box-shadow:0 12px 35px #0003}
+ #vh-desktop-account-panel #vh-account-actions{display:flex;flex-direction:column;align-items:stretch;gap:9px}
+ #vh-desktop-account-panel #vh-sync{width:100%;max-width:none}
+ #vh-desktop-account-panel #vh-account-tools{width:100%}
+ #vh-desktop-account-panel #vh-account-tools summary{width:100%}
+ #vh-desktop-account-panel #vh-backup-tools{right:0;max-width:100%}
+}
+@media(max-width:760px){#vh-desktop-account{display:none!important}}
+</style>
+<script id="vh-desktop-account-compact-js">
+(()=>{
+ const actions=document.querySelector('.topbar .top-actions');
+ const account=document.getElementById('vh-account-actions');
+ if(!actions||!account)return;
+ const desktop=document.createElement('details');desktop.id='vh-desktop-account';
+ const title=document.createElement('summary');title.textContent='Mi cuenta y copias';
+ const contents=document.createElement('div');contents.id='vh-desktop-account-panel';
+ desktop.append(title,contents);actions.append(desktop);
+ const mq=window.matchMedia('(min-width:761px)');
+ function layout(){
+  if(mq.matches){contents.append(account);}else{actions.append(account);desktop.open=false;}
+ }
+ layout();mq.addEventListener('change',layout);
+ document.addEventListener('click',e=>{if(desktop.open&&!desktop.contains(e.target))desktop.open=false;});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')desktop.open=false;});
+})();
+</script>
 </body>
 </html>

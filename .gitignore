@@ -1,0 +1,5 @@
+*backup*.json
+*Copia*.json
+*.sqlite
+.env
+.env.*

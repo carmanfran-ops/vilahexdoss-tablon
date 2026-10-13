@@ -1675,39 +1675,45 @@ body:not(.vh-ready) #vh-backup-tools{display:none!important}
  update();
 })();
 </script>
-<style id="vh-desktop-account-compact-css">
-/* En escritorio, la cuenta se abre solo cuando se solicita. En móvil se deja intacta. */
+
+<style id="vh-desktop-clean-abadi-v2">
+/* Restauramos el diseño general de VilahexDoss; solo modificamos los controles de escritorio. */
+html,body,button,input,select,textarea,summary,dialog{font-family:"Abadi MT","Abadi","Segoe UI",Arial,sans-serif!important}
 @media(min-width:761px){
- #vh-desktop-account{position:relative;align-self:center;z-index:1010}
- #vh-desktop-account > summary{list-style:none;cursor:pointer;padding:10px 13px;background:#4d5056;color:#fff;border-radius:8px;font:700 12px Arial,sans-serif;white-space:nowrap}
- #vh-desktop-account > summary::-webkit-details-marker{display:none}
- #vh-desktop-account > summary:after{content:' ▾';color:#ffb778}
- #vh-desktop-account[open] > summary{background:#e87512}
- #vh-desktop-account-panel{position:absolute;right:0;top:calc(100% + 8px);width:min(360px,calc(100vw - 40px));padding:12px;background:#fff;border:1px solid #dfe4e8;border-radius:10px;box-shadow:0 12px 35px #0003}
- #vh-desktop-account-panel #vh-account-actions{display:flex;flex-direction:column;align-items:stretch;gap:9px}
- #vh-desktop-account-panel #vh-sync{width:100%;max-width:none}
- #vh-desktop-account-panel #vh-account-tools{width:100%}
- #vh-desktop-account-panel #vh-account-tools summary{width:100%}
- #vh-desktop-account-panel #vh-backup-tools{right:0;max-width:100%}
+ .topbar{align-items:center;flex-wrap:nowrap;gap:12px}
+ .topbar .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;min-width:0}
+ #vh-account-actions{display:none!important}
+ #vh-desktop-controls{position:relative;display:block;flex:0 0 auto;z-index:1020}
+ #vh-desktop-controls > summary{display:flex;align-items:center;gap:7px;list-style:none;cursor:pointer;background:#4d5056;color:#fff;border:1px solid #4d5056;border-radius:7px;padding:9px 13px;font-size:12px;font-weight:700;white-space:nowrap;min-height:38px}
+ #vh-desktop-controls > summary::-webkit-details-marker{display:none}
+ #vh-desktop-controls > summary::after{content:'▾';color:#ffbc87;font-size:11px}
+ #vh-desktop-controls[open] > summary{background:#e87512;border-color:#e87512}
+ #vh-desktop-controls-panel{position:absolute;top:calc(100% + 8px);right:0;width:330px;max-width:calc(100vw - 32px);padding:12px;background:#fff;border:1px solid #dfe4e8;border-radius:9px;box-shadow:0 14px 32px rgba(30,39,49,.19);color:#26313b}
+ #vh-desktop-controls-panel #vh-sync{display:block!important;max-width:none;width:100%;position:static!important;background:#f8f9fa;font-size:12px;padding:10px}
+ #vh-desktop-controls-panel #vh-account-tools{display:block;width:100%;margin-top:8px}
+ #vh-desktop-controls-panel #vh-account-tools summary{display:block;width:100%;text-align:center}
+ #vh-desktop-controls-panel #vh-backup-tools{width:100%;max-width:none;left:0;right:auto;box-sizing:border-box}
 }
-@media(max-width:760px){#vh-desktop-account{display:none!important}}
+@media(max-width:760px){#vh-desktop-controls{display:none!important}}
 </style>
-<script id="vh-desktop-account-compact-js">
+<script id="vh-desktop-clean-abadi-js-v2">
 (()=>{
  const actions=document.querySelector('.topbar .top-actions');
  const account=document.getElementById('vh-account-actions');
  if(!actions||!account)return;
- const desktop=document.createElement('details');desktop.id='vh-desktop-account';
- const title=document.createElement('summary');title.textContent='Mi cuenta y copias';
- const contents=document.createElement('div');contents.id='vh-desktop-account-panel';
- desktop.append(title,contents);actions.append(desktop);
+ const details=document.createElement('details');details.id='vh-desktop-controls';
+ const summary=document.createElement('summary');summary.textContent='Mi cuenta y copias';
+ const panel=document.createElement('div');panel.id='vh-desktop-controls-panel';
+ details.append(summary,panel);actions.append(details);
  const mq=window.matchMedia('(min-width:761px)');
- function layout(){
-  if(mq.matches){contents.append(account);}else{actions.append(account);desktop.open=false;}
+ function arrange(){
+  if(mq.matches){panel.append(account);account.style.setProperty('display','flex','important');}
+  else{actions.append(account);account.style.removeProperty('display');details.open=false;}
  }
- layout();mq.addEventListener('change',layout);
- document.addEventListener('click',e=>{if(desktop.open&&!desktop.contains(e.target))desktop.open=false;});
- document.addEventListener('keydown',e=>{if(e.key==='Escape')desktop.open=false;});
+ /* Evitamos que el estilo móvil se altere; restauramos el bloque al volver a móvil. */
+ arrange();mq.addEventListener('change',arrange);
+ document.addEventListener('click',e=>{if(details.open&&!details.contains(e.target))details.open=false;});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')details.open=false;});
 })();
 </script>
 </body>

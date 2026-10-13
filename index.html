@@ -1544,7 +1544,136 @@ body:not(.vh-ready) > .sidebar, body:not(.vh-ready) > .app, body:not(.vh-ready) 
 </form><p id="vh-auth-message" role="status">Preparando conexión…</p>
 </section></div>
 <div id="vh-sync" hidden role="status"><span id="vh-sync-text"></span><br><button id="vh-retry" type="button" hidden>Reintentar guardar</button> <button id="vh-signout" type="button">Cerrar sesión</button></div>
+
+<style id="vh-topbar-integration">
+/* Controles de cuenta y copias integrados, sin ventanas flotantes. */
+.topbar{align-items:flex-start;flex-wrap:wrap}
+.topbar .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+#vh-account-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:100%}
+#vh-sync{position:static;inset:auto;z-index:auto;padding:7px 10px;max-width:300px;min-width:0;box-shadow:none;border:1px solid #e0e4e8;background:#f7f8f9;border-radius:8px;color:#3f4248;font:11px/1.4 Arial,sans-serif}
+#vh-sync-text{display:block;overflow-wrap:anywhere}
+#vh-sync button{display:inline-block;font-size:11px;margin:5px 4px 0 0;padding:6px 9px;white-space:nowrap}
+#vh-account-tools{position:relative}
+#vh-account-tools summary{cursor:pointer;list-style:none;border:1px solid #d6dde2;background:#fff;color:#42484f;border-radius:8px;padding:9px 11px;font:700 12px Arial,sans-serif;white-space:nowrap}
+#vh-account-tools summary::-webkit-details-marker{display:none}
+#vh-account-tools summary::after{content:' ▾';color:#e87512}
+#vh-account-tools[open] summary{border-color:#e87512}
+#vh-backup-tools{position:absolute;top:calc(100% + 7px);right:0;left:auto;bottom:auto;z-index:1000;display:flex;flex-wrap:wrap;max-width:min(360px,calc(100vw - 24px));width:340px;box-shadow:0 12px 32px #0002;border:1px solid #e3e4e6;padding:12px}
+#vh-backup-tools button{font-size:11px}
+#vh-backup-tools span{line-height:1.45}
+body:not(.vh-ready) #vh-backup-tools{display:none!important}
+@media(max-width:900px){.topbar .top-actions{width:100%;justify-content:flex-start}}
+@media(max-width:700px){#vh-account-actions{width:100%}#vh-sync{left:auto;right:auto;bottom:auto;max-width:100%;flex:1 1 190px}#vh-backup-tools{right:auto;left:0;max-width:calc(100vw - 32px)}.topbar .top-actions{gap:8px}}
+</style>
+
+<script id="vh-topbar-mount">
+(() => {
+  const actions=document.querySelector('.topbar .top-actions');
+  const sync=document.getElementById('vh-sync');
+  const backup=document.getElementById('vh-backup-tools');
+  if(!actions || !sync || !backup) return;
+  const account=document.createElement('div');
+  account.id='vh-account-actions';
+  const menu=document.createElement('details');
+  menu.id='vh-account-tools';
+  const summary=document.createElement('summary');
+  summary.textContent='Copias de seguridad';
+  menu.append(summary,backup);
+  account.append(sync,menu);
+  actions.append(account);
+  document.addEventListener('click',event=>{if(menu.open && !menu.contains(event.target))menu.open=false;});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')menu.open=false;});
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="bootstrap.js"></script>
+
+<style id="vh-mobile-v1">
+/* Vista móvil: navegación permanente sin perder secciones de la aplicación */
+#vh-mobile-nav{display:none}
+@media (max-width:760px){
+ html{scroll-padding-bottom:95px}
+ body{min-width:0;overflow-x:hidden;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+ .app{margin-left:0;min-width:0}
+ main{padding:12px 12px 22px}
+ .topbar{padding:12px 12px 14px;gap:10px;align-items:stretch}
+ .topbar h1{font-size:20px}
+ .topbar .subtitle{font-size:11px;line-height:1.4}
+ .topbar .top-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%}
+ .topbar #btnNuevaObra{order:-1;min-height:44px;width:100%;font-size:14px}
+ #vh-account-actions{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:7px}
+ #vh-sync{max-width:none;min-width:0;width:100%;font-size:11px;padding:7px}
+ #vh-account-tools{min-width:0}
+ #vh-account-tools summary{white-space:normal;font-size:11px;min-height:42px;display:flex;align-items:center}
+ #vh-backup-tools{left:auto;right:0;width:min(335px,calc(100vw - 24px));max-width:calc(100vw - 24px)}
+ .corporate-hero-content{width:100%;padding:15px}
+ .corporate-hero-content h2{font-size:19px}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .kpi{padding:10px}.kpi strong{font-size:20px}
+ .obras-grid,.personal-grid{grid-template-columns:minmax(0,1fr)!important;gap:10px}
+ .obra-card,.person-card{min-width:0}
+ .card-head{gap:7px}.card-head h3{font-size:16px}
+ .info-row{grid-template-columns:95px minmax(0,1fr);gap:6px}
+ .section-head{padding:12px;flex-direction:column;align-items:stretch}
+ .section-head h2{font-size:18px}
+ .work-item{grid-template-columns:minmax(0,1fr)}
+ .personal-admin,.machinery-layout{grid-template-columns:minmax(0,1fr)}
+ .assignment-toolbar,.assignment-people{grid-template-columns:1fr}
+ .toolbar{gap:7px}.toolbar input,.toolbar select,.agenda-controls select{min-height:44px;max-width:100%}
+ .hours-entry-panel{padding:12px}
+ .person-hours-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .person-hours-name{grid-column:1/-1}
+ .agenda-layout{grid-template-columns:minmax(0,1fr)}
+ .calendar-card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .calendar-weekdays,.calendar-grid{min-width:700px}
+ .machinery-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .material-edit-row,.machine-edit-row{grid-template-columns:minmax(0,1fr)}
+ dialog{width:calc(100vw - 16px);max-width:calc(100vw - 16px);max-height:calc(100dvh - 20px);overflow-y:auto;margin:auto}
+ #obraForm,.detalle-wrap{padding:14px}
+ .modal-head h2{font-size:19px}
+ .detail-grid,.form-grid{grid-template-columns:minmax(0,1fr)}
+ .detail-box.full,.span-2{grid-column:auto}
+ .modal-actions{flex-wrap:wrap}.modal-actions button{min-height:44px}
+ input,select,textarea{font-size:16px!important;max-width:100%}
+ button,.btn,.work-action,.machine-btn{min-height:40px;touch-action:manipulation}
+ #vh-mobile-nav{position:fixed;display:flex;left:0;right:0;bottom:0;z-index:9000;background:#34373e;color:white;box-shadow:0 -4px 18px #0003;padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px));gap:2px;justify-content:space-around}
+ #vh-mobile-nav button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;color:#e6e7e9;padding:5px 0;border-radius:7px;font-size:10px;font-weight:700;min-height:50px;cursor:pointer}
+ #vh-mobile-nav button .vh-icon{font-size:20px;line-height:1}
+ #vh-mobile-nav button.active{background:#f47a00;color:#fff}
+ #vh-mobile-nav button:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+ body:not(.vh-ready) #vh-mobile-nav{display:none}
+}
+@media(max-width:380px){#vh-mobile-nav button{font-size:9px}#vh-mobile-nav button .vh-icon{font-size:18px}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+
+<nav id="vh-mobile-nav" aria-label="Navegación móvil">
+ <button type="button" data-nav="navObras" class="active" aria-label="Obras"><span class="vh-icon" aria-hidden="true">🏗️</span><span>Obras</span></button>
+ <button type="button" data-nav="navUrgencias" aria-label="Urgencias"><span class="vh-icon" aria-hidden="true">⚠️</span><span>Urgencias</span></button>
+ <button type="button" data-nav="navMaterial" aria-label="Material"><span class="vh-icon" aria-hidden="true">📦</span><span>Material</span></button>
+ <button type="button" data-nav="navPersonal" aria-label="Personal"><span class="vh-icon" aria-hidden="true">👷</span><span>Personal</span></button>
+ <button type="button" data-nav="navMaquinaria" aria-label="Maquinaria"><span class="vh-icon" aria-hidden="true">🚜</span><span>Máquinas</span></button>
+ <button type="button" data-nav="navAgenda" aria-label="Horas y días"><span class="vh-icon" aria-hidden="true">📅</span><span>Agenda</span></button>
+</nav>
+<script id="vh-mobile-navigation-script">
+(() => {
+ const buttons=[...document.querySelectorAll('#vh-mobile-nav button[data-nav]')];
+ const update=()=>{
+   for(const b of buttons){
+     const target=document.getElementById(b.dataset.nav);
+     const active=Boolean(target?.classList.contains('active'));
+     b.classList.toggle('active',active);
+     if(active)b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+   }
+ };
+ buttons.forEach(b=>b.addEventListener('click',()=>{
+   document.getElementById(b.dataset.nav)?.click();
+   update();
+   window.scrollTo({top:0,behavior:'auto'});
+ }));
+ const sidebar=document.querySelector('.sidebar .menu');
+ if(sidebar){new MutationObserver(update).observe(sidebar,{attributes:true,subtree:true,attributeFilter:['class']});}
+ update();
+})();
+</script>
 </body>
 </html>
